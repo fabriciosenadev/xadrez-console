@@ -16,11 +16,11 @@ namespace xadrez_console
                 {
                     if (tab.peca(i, j) == null)
                     {
-                        Console.Write("- ");
+                        Console.Write("- "); // posição vazia
                     }
                     else
                     {
-                        Console.Write(tab.peca(i, j) + " ");
+                        Console.Write(tab.peca(i, j) + " "); // posicação com peça
                     }
                 }
                 Console.WriteLine();

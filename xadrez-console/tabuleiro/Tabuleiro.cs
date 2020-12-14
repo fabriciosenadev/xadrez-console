@@ -13,7 +13,7 @@ namespace tabuleiro
         public Tabuleiro(int linhas, int colunas)
         {
             // this indica a prop quando o parametro tem a mesma nomenclatura
-            this.linhas = linhas; 
+            this.linhas = linhas;
             this.colunas = colunas;
 
             pecas = new Peca[linhas, colunas]; //inicia com os argumentos informados
@@ -23,6 +23,12 @@ namespace tabuleiro
         public Peca peca(int linha, int coluna)
         {
             return pecas[linha, coluna];
+        }
+
+        public void colocarPeca(Peca p, Posicao pos)
+        {
+            pecas[pos.linha, pos.coluna] = p; // adiciona peça na posição informada
+            p.posicao = pos; // informa a posição da peça
         }
     }
 }

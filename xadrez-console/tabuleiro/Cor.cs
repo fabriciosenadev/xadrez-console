@@ -8,7 +8,7 @@ namespace tabuleiro
     {
         Branca,
         Preta,
-        Amarela, 
+        Amarela,
         Azul,
         Vermelha,
         Verde,
