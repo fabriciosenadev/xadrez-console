@@ -18,5 +18,11 @@ namespace tabuleiro
 
             pecas = new Peca[linhas, colunas]; //inicia com os argumentos informados
         }
+
+        // metodo que retorna uma peca, usando linha e coluna como parametros
+        public Peca peca(int linha, int coluna)
+        {
+            return pecas[linha, coluna];
+        }
     }
 }
