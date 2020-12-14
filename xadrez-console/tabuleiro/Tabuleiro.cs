@@ -25,10 +25,52 @@ namespace tabuleiro
             return pecas[linha, coluna];
         }
 
+        //sobrecarga de peça recebendo uma posição especificada - melhoria
+        public Peca peca(Posicao pos)
+        {
+            return pecas[pos.linha, pos.coluna];
+        }
+
         public void colocarPeca(Peca p, Posicao pos)
         {
+            // verifica se foi feita tentativa de colocar duas peças na mesma posição
+            if (existePeca(pos))
+            {
+                throw new TabuleiroException("Já existe uma peça nesta posição!");
+            }
+
             pecas[pos.linha, pos.coluna] = p; // adiciona peça na posição informada
             p.posicao = pos; // informa a posição da peça
+        }
+
+        // metodo para testar se existe uma peça na posição informada
+        public bool existePeca(Posicao pos)
+        {
+            // verifica se a posição informada é valida
+            validarPosicao(pos);
+            // retorna verdadeiro caso a peça esteja na posição
+            return peca(pos) != null;
+        }
+
+        // metodo para testar se uma posição é valida
+        public bool posicaoValida(Posicao pos)
+        {
+            // valida das posições iniciais até as posições declaradas no contrutor
+            if (pos.linha < 0 || pos.linha > linhas || pos.coluna < 0 || pos.coluna > colunas)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        // validação de posição para tratamento com excessão
+        public void validarPosicao(Posicao pos)
+        {
+            if (!posicaoValida(pos))
+            {
+                //lança excessão
+                throw new TabuleiroException("Posição inválida!");
+            }
         }
     }
 }
