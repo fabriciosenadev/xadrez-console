@@ -43,6 +43,19 @@ namespace tabuleiro
             p.posicao = pos; // informa a posição da peça
         }
 
+        // retira uma peça do tabuleiro considerando a posicação informada
+        public Peca retirarPeca(Posicao pos)
+        {
+            if (peca(pos) == null) // não há peça nesta posição
+            {
+                return null;
+            }
+            Peca aux = peca(pos); // armazena a peça na posição informada
+            aux.posicao = null; // passa a posição da peça para null, informando que foi retirada do tabuleiro
+            pecas[pos.linha, pos.coluna] = null; // informa ao conjunto de peças que naquela posição a peça foi removida
+            return aux; // retorna a peça que foi armazenada
+        }
+
         // metodo para testar se existe uma peça na posição informada
         public bool existePeca(Posicao pos)
         {

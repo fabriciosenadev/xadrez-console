@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using tabuleiro;
+using xadrez;
 
 namespace xadrez_console
 {
@@ -28,6 +29,14 @@ namespace xadrez_console
                 Console.WriteLine();
             }
             Console.WriteLine("  a b c d e f g h"); // letras da base do tabuleiro
+        }
+
+        public static PosicaoXadrez lerPosicaoXadrez()
+        { // lê do teclado o que o usuário digitar
+            string s = Console.ReadLine(); // usuário irá informar uma posição no tabuleiro ex: c2
+            char coluna = s[0]; // pega a letra da coluna digitada
+            int linha = int.Parse(s[1].ToString()); // pega o número da linha digitada
+            return new PosicaoXadrez(coluna, linha); // retorna uma nova posição no tabuleiro
         }
 
         public static void imprimirPeca(Peca peca)
