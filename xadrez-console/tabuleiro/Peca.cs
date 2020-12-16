@@ -25,6 +25,27 @@ namespace tabuleiro
             qteMovimentos++;
         }
 
+        public bool existeMovimentosPossiveis() // testa se há movimentos possíveis para a posição selecionada
+        {
+            bool[,] mat = movimentosPossiveis();
+            for (int i = 0; i < tab.linhas; i++)
+            {
+                for (int j = 0; j < tab.colunas; j++)
+                {
+                    if (mat[i, j]) // existe um movimento possível para a posição selecionada
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false; // não há movimentos para a posição selecionada
+        }
+
+        public bool podeMoverPara(Posicao pos) // verifica se a peça pode ser movida para a posição selecioada
+        {
+            return movimentosPossiveis()[pos.linha, pos.coluna]; // testa os movimentos possíveis para a posição informada
+        }
+
         public abstract bool[,] movimentosPossiveis(); // metodo sobre movimentos possíveis por peça, é especializada e individual por peça
     }
 }
