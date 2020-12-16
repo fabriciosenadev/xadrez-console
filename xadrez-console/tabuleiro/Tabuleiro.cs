@@ -69,7 +69,7 @@ namespace tabuleiro
         public bool posicaoValida(Posicao pos)
         {
             // valida das posições iniciais até as posições declaradas no contrutor
-            if (pos.linha < 0 || pos.linha > linhas || pos.coluna < 0 || pos.coluna > colunas)
+            if (pos.linha < 0 || pos.linha >= linhas || pos.coluna < 0 || pos.coluna >= colunas)
             {
                 return false;
             }
