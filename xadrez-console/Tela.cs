@@ -17,14 +17,23 @@ namespace xadrez_console
             imprimirPecasCapturadas(partida);
 
             Console.WriteLine();
-
             Console.WriteLine("Turno: " + partida.turno);
-            Console.WriteLine("Aguardando jogada: " + partida.jogadorAtual);
 
-            if(partida.xeque) // verifica que a jogada coloca o adversário em xeque
+            if (!partida.terminada) // verifica se a partida está terminada
             {
-                Console.WriteLine("XEQUE!");
+                Console.WriteLine("Aguardando jogada: " + partida.jogadorAtual);
+
+                if (partida.xeque) // verifica que a jogada coloca o adversário em xeque
+                {
+                    Console.WriteLine("XEQUE!");
+                }
             }
+            else
+            {
+                Console.WriteLine("XEQUEMATE!");
+                Console.WriteLine("Vencedor:" + partida.jogadorAtual);
+            }
+
         }
 
         public static void imprimirPecasCapturadas(PartidaDeXadrez partida) // imprime as peças capturadas separadas por conjunto de cores
@@ -32,9 +41,9 @@ namespace xadrez_console
             Console.WriteLine("Peças capturadas:");
             Console.Write("Brancas: ");
             imprimirConjunto(partida.pecasCapturadas(Cor.Branca));
-            
+
             Console.WriteLine();
-            
+
             Console.Write("Pretas: ");
             ConsoleColor aux = Console.ForegroundColor; // pega a cor original
             Console.ForegroundColor = ConsoleColor.Yellow; // imprime as pretas
@@ -46,7 +55,7 @@ namespace xadrez_console
         public static void imprimirConjunto(HashSet<Peca> conjunto) // imprime o conjunto das peças que foram capturadas
         {
             Console.Write("[");
-            foreach(Peca x in conjunto)
+            foreach (Peca x in conjunto)
             {
                 Console.Write(x + " ");
             }
@@ -80,7 +89,7 @@ namespace xadrez_console
                 Console.Write(8 - i + " "); // numeros na lateral esquerda do tabuleiro
                 for (int j = 0; j < tab.colunas; j++)
                 {
-                    if(posicoesPossiveis[i, j]) // exibe a posição em destaque quando a casa for um movimento possível
+                    if (posicoesPossiveis[i, j]) // exibe a posição em destaque quando a casa for um movimento possível
                     {
                         Console.BackgroundColor = fundoAlterado;
                     }
