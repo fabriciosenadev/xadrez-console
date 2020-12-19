@@ -15,6 +15,7 @@ namespace xadrez
         public bool terminada { get; private set; }
         private HashSet<Peca> pecas;        // conjunto de peças da partida
         private HashSet<Peca> capturadas;   // conjunto de peças capturadas
+        public bool xeque { get; private set; } // controle de xeque da partida
 
         public PartidaDeXadrez()
         {
@@ -22,6 +23,7 @@ namespace xadrez
             this.turno = 1;                 // contagem inicial do turno
             this.jogadorAtual = Cor.Branca; // cor das peças que inicia o jogo
             terminada = false;              // indica o termino da partida
+            xeque = false;                  // indica que a posição atual coloca o rei adversário em xeque
 
             //conjuntos de peças
             pecas = new HashSet<Peca>();
@@ -30,23 +32,53 @@ namespace xadrez
             colocarPecas();                 // coloca as peças declaradas no tabuleiro
         }
 
-        public void executaMovimento(Posicao origem, Posicao destino)
+        public Peca executaMovimento(Posicao origem, Posicao destino) // executa movimento da Peca e retorna as peças capturadas
         {
             Peca p = tab.retirarPeca(origem);               // remove a peça da posição de origem informada
             p.incrementarQteMovimentos();                   // incrementa a quantidade de movimentos
             Peca pecaCapturada = tab.retirarPeca(destino);  // informa a posição destino para que caso haja uma peça adversária, seja removida do tabuleiro
             tab.colocarPeca(p, destino);                    // coloca a peça no destino informado
-            
+
             // peças capturadas
-            if(pecaCapturada != null) // verifica se existe uma peça que foi capturada
+            if (pecaCapturada != null) // verifica se existe uma peça que foi capturada
             {
                 capturadas.Add(pecaCapturada); // adiciona ao conjunto das peças capturadas
             }
+            return pecaCapturada;
+        }
+
+        public void desfazMovimento(Posicao origem, Posicao destino, Peca pecaCapturada) // reverte os movimentos realizados
+        {
+            Peca p = tab.retirarPeca(destino); // remove a peça da posição de destino informada
+            p.decrementarQteMovimentos(); // decrementa a quantidade de movimentos
+            if (pecaCapturada != null) // verifica se houve uma peça captura de uma peça
+            {
+                tab.colocarPeca(pecaCapturada, destino); // coloca a peça capturada de volta no destino
+                capturadas.Remove(pecaCapturada); // remove a peça do conjunto de peças capturadas
+            }
+            tab.colocarPeca(p, origem); // coloca a peca na posição de origem
         }
 
         public void realizaJogada(Posicao origem, Posicao destino) // faz a jogada acontecer de fato
         {
-            executaMovimento(origem, destino);  // executa o movimento
+            Peca pecaCapturadas = executaMovimento(origem, destino);  // executa o movimento e retorna peça capturada
+
+            if (estaEmXeque(jogadorAtual)) // verifica se o jogador que moveu está em xeque
+            {
+                // será necessário desfazer a jogada
+                desfazMovimento(origem, destino, pecaCapturadas);
+                throw new TabuleiroException("Você não pode se colocar em xeque!");
+            }
+
+            if (estaEmXeque(adversaria(jogadorAtual))) // verifica se o adversário está em xeque
+            {
+                xeque = true;
+            }
+            else
+            {
+                xeque = false;
+            }
+
             turno++;                            // passa o turno
             mudaJogador();                      // muda o jogador atual
         }
@@ -92,9 +124,9 @@ namespace xadrez
         public HashSet<Peca> pecasCapturadas(Cor cor) // separa as peças capturadas pela cor informada
         {
             HashSet<Peca> aux = new HashSet<Peca>();
-            foreach(Peca x in capturadas)
+            foreach (Peca x in capturadas)
             {
-                if(x.cor == cor) // verifica se a cor da peça capturada é a mesma cor passada por parametro
+                if (x.cor == cor) // verifica se a cor da peça capturada é a mesma cor passada por parametro
                 {
                     aux.Add(x);
                 }
@@ -105,9 +137,9 @@ namespace xadrez
         public HashSet<Peca> pecasEmJogo(Cor cor) // separa as peças em jogo pela cor informada
         {
             HashSet<Peca> aux = new HashSet<Peca>();
-            foreach(Peca x in pecas)
+            foreach (Peca x in pecas)
             {
-                if(x.cor == cor) // verifica se a cor da peça em jogo é a mesma cor passada por parametro
+                if (x.cor == cor) // verifica se a cor da peça em jogo é a mesma cor passada por parametro
                 {
                     aux.Add(x);
                 }
@@ -116,6 +148,49 @@ namespace xadrez
             return aux; // retorna o conjunto filtrado pela cor
         }
 
+        private Cor adversaria(Cor cor) // definição de jogador adversário
+        {
+            if (cor == Cor.Branca)
+            {
+                return Cor.Preta;
+            }
+            else
+            {
+                return Cor.Branca;
+            }
+        }
+
+        private Peca rei(Cor cor) // procura o rei da cor informada
+        {
+            foreach (Peca x in pecasEmJogo(cor))
+            {
+                if (x is Rei) // quando o rei é encontrado
+                {
+                    return x;
+                }
+            }
+            return null; // rei não foi encontrado
+        }
+
+        public bool estaEmXeque(Cor cor) // Testa se o rei está em xeque
+        {
+            Peca R = rei(cor);
+
+            if (R == null) // veriifca se tem rei no tabuleiro
+            {
+                throw new TabuleiroException("Não tem rei da cor " + cor + "");
+            }
+
+            foreach (Peca x in pecasEmJogo(adversaria(cor))) // para cada peça em jogo da cor adversária
+            {
+                bool[,] mat = x.movimentosPossiveis();
+                if (mat[R.posicao.linha, R.posicao.coluna]) // verifica se o rei está em xeque
+                {
+                    return true;
+                }
+            }
+            return false; // quando rei não está em xeque
+        }
         public void colocarNovaPeca(char coluna, int linha, Peca peca) // metodo auxiliar para colocação de peças no tabuleiro
         {
             tab.colocarPeca(peca, new PosicaoXadrez(coluna, linha).toPosicao()); // coloca as peças informadas na posição declarada
