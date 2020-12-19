@@ -46,7 +46,7 @@ namespace tabuleiro
             return false; // não há movimentos para a posição selecionada
         }
 
-        public bool podeMoverPara(Posicao pos) // verifica se a peça pode ser movida para a posição selecioada
+        public bool movimentoPossivel(Posicao pos) // verifica se a peça pode ser movida para a posição selecioada
         {
             return movimentosPossiveis()[pos.linha, pos.coluna]; // testa os movimentos possíveis para a posição informada
         }
