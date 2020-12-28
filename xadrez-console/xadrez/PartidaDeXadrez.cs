@@ -153,6 +153,26 @@ namespace xadrez
                 throw new TabuleiroException("Você não pode se colocar em xeque!");
             }
 
+            Peca p = tab.peca(destino); // pega a peça movida
+
+            // jogada especia: promocao
+            if(p is Peao)
+            {
+                // verifica se o peão dechou na ultima casa adversária
+                if((p.cor == Cor.Branca && destino.linha == 0) || (p.cor == Cor.Preta && destino.linha == 7)) 
+                {
+                    // remove o peão do tabuleiro e das peças em jogo
+                    p = tab.retirarPeca(destino);
+                    pecas.Remove(p);
+
+                    // adiciona uma dama no lugar o peão retirado
+                    Peca dama = new Dama(tab, p.cor);
+                    tab.colocarPeca(dama, destino);
+                    pecas.Add(dama);
+                }
+            }
+
+
             if (estaEmXeque(adversaria(jogadorAtual))) // verifica se o adversário está em xeque
             {
                 xeque = true;
@@ -172,7 +192,7 @@ namespace xadrez
                 mudaJogador();  // muda o jogador atual
             }
 
-            Peca p = tab.peca(destino); // pega a peça movida
+            
 
             // jogada especial: en passant
             // se o peão moveu pela primeira vez
